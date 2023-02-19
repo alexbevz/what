@@ -1,0 +1,16 @@
+server:
+  port: ${RANCHER_PORT}
+
+spring:
+  application:
+    name: rancher
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: info, prometheus
+      base-path:
+      path-mapping:
+        prometheus: /metrics
+        info: /actuator/info

@@ -1,0 +1,16 @@
+server:
+  port: ${HANDYMAN_PORT}
+
+spring:
+  application:
+    name: handyman
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: info, prometheus
+      base-path:
+      path-mapping:
+        prometheus: /metrics
+        info: /actuator/info
