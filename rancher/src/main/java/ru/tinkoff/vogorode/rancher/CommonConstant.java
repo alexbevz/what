@@ -1,4 +1,4 @@
-package ru.tinkoff.vogorode.handyman;
+package ru.tinkoff.vogorode.rancher;
 
 
 public class CommonConstant {

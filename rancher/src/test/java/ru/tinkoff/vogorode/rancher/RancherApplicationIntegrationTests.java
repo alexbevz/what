@@ -23,6 +23,9 @@ class RancherApplicationIntegrationTests {
     public static void setUp() {
         // set a value RANCHER_PORT to 8093
         System.setProperty("RANCHER_PORT", "8093");
+
+        // set a value GRPC_PORT to 9103
+        System.setProperty("GRPC_PORT", "9103");
     }
 
     @Test
@@ -41,7 +44,7 @@ class RancherApplicationIntegrationTests {
         ResultActions response = mockMvc.perform(get(readinessUrl));
 
         final String expectedContentResult = """
-                {"RancherService": "OK"}""";
+                {"rancherService": "OK"}""";
 
         response.andExpect(status().isOk())
                 .andExpect(content().json(expectedContentResult));

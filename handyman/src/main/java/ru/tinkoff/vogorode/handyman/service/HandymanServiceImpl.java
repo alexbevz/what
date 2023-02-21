@@ -1,7 +1,6 @@
 package ru.tinkoff.vogorode.handyman.service;
 
 import com.google.protobuf.Empty;
-
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +19,6 @@ public class HandymanServiceImpl extends HandymanServiceGrpc.HandymanServiceImpl
 
     /**
      * gRPC method to share information about current service
-     *
      */
     @Override
     public void getVersion(Empty request, StreamObserver<VersionResponse> responseObserver) {
@@ -40,7 +38,6 @@ public class HandymanServiceImpl extends HandymanServiceGrpc.HandymanServiceImpl
 
     /**
      * gRPC method to check a readiness of service
-     *
      */
     @Override
     public void getReadiness(Empty request, StreamObserver<ReadinessResponse> responseObserver) {
