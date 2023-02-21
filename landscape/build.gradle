@@ -26,10 +26,6 @@ configurations {
 
 repositories {
     mavenCentral()
-    mavenLocal()
-    flatDir {
-        dirs '../rancher', '../handyman'
-    }
 }
 
 dependencies {
@@ -39,8 +35,6 @@ dependencies {
     implementation 'net.devh:grpc-client-spring-boot-starter:2.14.0.RELEASE'
     implementation "io.grpc:grpc-protobuf:${grpcVersion}"
     implementation "io.grpc:grpc-stub:${grpcVersion}"
-    implementation fileTree(dir: '../rancher', include: '*.jar')
-    implementation fileTree(dir: '../handyman', include: '*.jar')
 
     compileOnly 'org.projectlombok:lombok'
 
