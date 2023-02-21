@@ -23,6 +23,9 @@ class HandymanApplicationIntegrationTests {
     public static void setUp() {
         // set a value HANDYMAN_PORT to 8091
         System.setProperty("HANDYMAN_PORT", "8091");
+
+        // set a value GRPC_PORT to 9101
+        System.setProperty("GRPC_PORT", "9101");
     }
 
     @Test
@@ -41,7 +44,7 @@ class HandymanApplicationIntegrationTests {
         ResultActions response = mockMvc.perform(get(readinessUrl));
 
         final String expectedContentResult = """
-                {"HandymanService": "OK"}""";
+                {"handymanService": "OK"}""";
 
         response.andExpect(status().isOk())
                 .andExpect(content().json(expectedContentResult));

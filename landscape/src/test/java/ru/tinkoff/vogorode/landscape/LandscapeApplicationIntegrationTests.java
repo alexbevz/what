@@ -41,7 +41,7 @@ class LandscapeApplicationIntegrationTests {
         ResultActions response = mockMvc.perform(get(readinessUrl));
 
         final String expectedContentResult = """
-                {"LandscapeService": "OK"}""";
+                {"landscapeService": "OK"}""";
 
         response.andExpect(status().isOk())
                 .andExpect(content().json(expectedContentResult));

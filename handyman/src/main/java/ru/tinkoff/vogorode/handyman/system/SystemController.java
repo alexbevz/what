@@ -1,5 +1,6 @@
 package ru.tinkoff.vogorode.handyman.system;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,7 +13,8 @@ import java.util.Map;
 @RequestMapping("/system")
 public class SystemController {
 
-    private final Map<String, String> systemReadinessMap = Map.of("HandymanService", "OK");
+    @Autowired
+    private SystemService systemService;
 
 
     /**
@@ -28,10 +30,11 @@ public class SystemController {
     /**
      * Checks readiness
      *
-     * @return ResponseEntity with meta-information about a system readiness
+     * @return ResponseEntity with meta-information about a readiness of service
      */
     @GetMapping("/readiness")
     public ResponseEntity<Map<String, String>> getReadiness() {
-        return new ResponseEntity<>(systemReadinessMap, HttpStatus.OK);
+        Map<String, String> readiness = systemService.getReadiness();
+        return new ResponseEntity<>(readiness, HttpStatus.OK);
     }
 }

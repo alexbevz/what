@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+import "common_messages.proto";
+package ru.tinkoff.vogorode.rancher;
+
+option java_package = "ru.tinkoff.vogorode.rancher";
+option java_multiple_files = true;
+
+service RancherService {
+  rpc getVersion(google.protobuf.Empty) returns (landscape.VersionResponse);
+  rpc getReadiness(google.protobuf.Empty) returns (landscape.ReadinessResponse);
+}

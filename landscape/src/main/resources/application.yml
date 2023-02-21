@@ -1,6 +1,15 @@
 server:
   port: ${LANDSCAPE_PORT}
 
+grpc:
+  client:
+    rancher:
+      address: localhost:9093
+      negotiation-type: plaintext
+    handyman:
+      address: localhost:9091
+      negotiation-type: plaintext
+
 spring:
   application:
     name: landscape
