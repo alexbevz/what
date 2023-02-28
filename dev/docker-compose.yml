@@ -1,0 +1,36 @@
+version: "3.9"
+
+services:
+  landscape-service:
+    build:
+      context: ./../landscape
+    environment:
+      SERVICE_PORT: ${LANDSCAPE_PORT}
+      RANCHER_GRPC_HOST: ${RANCHER_CONTAINER_NAME}
+      RANCHER_GRPC_PORT: ${RANCHER_GRPC_PORT}
+      HANDYMAN_GRPC_HOST: ${HANDYMAN_CONTAINER_NAME}
+      HANDYMAN_GRPC_PORT: ${HANDYMAN_GRPC_PORT}
+    ports:
+      - "${LANDSCAPE_PORT}:${LANDSCAPE_PORT}"
+
+  rancher-service:
+    container_name: ${RANCHER_CONTAINER_NAME}
+    build:
+      context: ./../rancher
+    environment:
+      SERVICE_PORT: ${RANCHER_PORT}
+      GRPC_PORT: ${RANCHER_GRPC_PORT}
+    ports:
+      - "${RANCHER_PORT}:${RANCHER_PORT}"
+      - "${RANCHER_GRPC_PORT}:${RANCHER_GRPC_PORT}"
+
+  handyman-service:
+    container_name: ${HANDYMAN_CONTAINER_NAME}
+    build:
+      context: ./../handyman
+    environment:
+      SERVICE_PORT: ${HANDYMAN_PORT}
+      GRPC_PORT: ${HANDYMAN_GRPC_PORT}
+    ports:
+      - "${HANDYMAN_PORT}:${HANDYMAN_PORT}"
+      - "${HANDYMAN_GRPC_PORT}:${HANDYMAN_GRPC_PORT}"
