@@ -4,6 +4,7 @@ server:
 grpc:
   server:
     port: ${GRPC_PORT}
+    address: 0.0.0.0
 
 spring:
   application:

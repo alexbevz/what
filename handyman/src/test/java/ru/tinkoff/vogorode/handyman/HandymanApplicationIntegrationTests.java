@@ -10,6 +10,8 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.util.regex.MatchResult;
+import java.util.regex.Matcher;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -58,6 +60,7 @@ class HandymanApplicationIntegrationTests {
                 {"HandymanService": "OK"}""";
 
         response.andExpect(status().isOk())
+                //TODO: to resolve situation
                 .andExpect(content().json(expectedContentResult));
     }
 

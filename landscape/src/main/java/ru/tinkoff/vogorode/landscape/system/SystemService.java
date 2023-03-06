@@ -4,13 +4,11 @@ import com.google.protobuf.Empty;
 import lombok.RequiredArgsConstructor;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.boot.info.BuildProperties;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
-import ru.tinkoff.vogorode.handyman.HandymanServiceGrpc;
-import ru.tinkoff.vogorode.landscape.ReadinessResponse;
-import ru.tinkoff.vogorode.landscape.VersionResponse;
+import ru.tinkoff.vogorode.common.proto.StatusServiceGrpc;
+import ru.tinkoff.vogorode.common.proto.message.ReadinessResponse;
+import ru.tinkoff.vogorode.common.proto.message.VersionResponse;
 import ru.tinkoff.vogorode.landscape.system.response.StatusServiceResponse;
-import ru.tinkoff.vogorode.rancher.RancherServiceGrpc;
 
 import java.util.HashMap;
 import java.util.List;
@@ -21,11 +19,13 @@ import java.util.Map;
 public class SystemService {
 
     private final BuildProperties buildProperties;
-    private final Environment environment;
+
     @GrpcClient("RancherService")
-    private RancherServiceGrpc.RancherServiceBlockingStub rancherStub;
+    private StatusServiceGrpc.StatusServiceBlockingStub rancherStatusServiceStub;
+
     @GrpcClient("HandymanService")
-    private HandymanServiceGrpc.HandymanServiceBlockingStub handymanStub;
+    private StatusServiceGrpc.StatusServiceBlockingStub handymanStatusServiceStub;
+
 
     /**
      * Getting readiness
@@ -34,12 +34,10 @@ public class SystemService {
      */
     public Map.Entry<String, String> getReadiness() {
         String nameService = buildProperties.getName();
-        String statusService = StatusService.OK.name();
-
+        //TODO: to check by all dependency of services
+        String statusService = ServiceStatus.OK.name();
         return Map.entry(nameService, statusService);
     }
-
-    //TODO: change the architecture of proto files
 
     /**
      * Getting general status from dependency services
@@ -48,41 +46,36 @@ public class SystemService {
      */
     public Map<String, List<StatusServiceResponse>> getGeneralStatus() {
         Map<String, List<StatusServiceResponse>> generalStatus = new HashMap<>();
-        addStatusRancherServiceResponse(generalStatus);
-        addStatusHandymanServiceResponse(generalStatus);
+        addStatusServiceToGeneralStatus(generalStatus, rancherStatusServiceStub);
+        addStatusServiceToGeneralStatus(generalStatus, handymanStatusServiceStub);
         return generalStatus;
     }
 
-    private void addStatusRancherServiceResponse(Map<String, List<StatusServiceResponse>> generalStatus) {
-        ReadinessResponse rancherReadiness = rancherStub.getReadiness(Empty.newBuilder().build());
-        VersionResponse rancherVersion = rancherStub.getVersion(Empty.newBuilder().build());
+    private void addStatusServiceToGeneralStatus(
+            Map<String, List<StatusServiceResponse>> generalStatus,
+            StatusServiceGrpc.StatusServiceBlockingStub statusServiceStub
+    ) {
+        ReadinessResponse readinessResponse = statusServiceStub.getReadiness(Empty.getDefaultInstance());
+        VersionResponse versionResponse = statusServiceStub.getVersion(Empty.getDefaultInstance());
+        String serviceHost = getServiceHost(statusServiceStub);
 
-        String rancherHost = getGrpcHost(rancherVersion.getArtifact());
-        List<StatusServiceResponse> statusRancherServiceResponse = List.of(toStatusServiceResponse(
-                rancherHost,
-                rancherReadiness,
-                rancherVersion
-        ));
-        generalStatus.put(rancherVersion.getName(), statusRancherServiceResponse);
+        List<StatusServiceResponse> statusServiceResponse = List.of(
+                getStatusServiceResponse(
+                        serviceHost,
+                        readinessResponse,
+                        versionResponse
+                )
+        );
+
+        generalStatus.put(versionResponse.getName(), statusServiceResponse);
     }
 
-    private void addStatusHandymanServiceResponse(Map<String, List<StatusServiceResponse>> generalStatus) {
-        ReadinessResponse handymanReadiness = rancherStub.getReadiness(Empty.newBuilder().build());
-        VersionResponse handymanVersion = handymanStub.getVersion(Empty.newBuilder().build());
-        String handymanHost = getGrpcHost(handymanVersion.getArtifact());
-        List<StatusServiceResponse> statusHandymanResponse = List.of(toStatusServiceResponse(
-                handymanHost,
-                handymanReadiness,
-                handymanVersion
-        ));
-        generalStatus.put(handymanVersion.getName(), statusHandymanResponse);
+    private String getServiceHost(StatusServiceGrpc.StatusServiceBlockingStub statusServiceStub) {
+        return statusServiceStub.getChannel()
+                .authority();
     }
 
-    private String getGrpcHost(String nameService) {
-        return environment.getProperty("grpc.client." + nameService + ".address");
-    }
-
-    private StatusServiceResponse toStatusServiceResponse(
+    private StatusServiceResponse getStatusServiceResponse(
             String host,
             ReadinessResponse readinessResponse,
             VersionResponse versionResponse

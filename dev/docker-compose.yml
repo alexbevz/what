@@ -10,6 +10,9 @@ services:
       RANCHER_GRPC_PORT: ${RANCHER_GRPC_PORT}
       HANDYMAN_GRPC_HOST: ${HANDYMAN_CONTAINER_NAME}
       HANDYMAN_GRPC_PORT: ${HANDYMAN_GRPC_PORT}
+    depends_on:
+      - handyman-service
+      - rancher-service
     ports:
       - "${LANDSCAPE_PORT}:${LANDSCAPE_PORT}"
 
@@ -34,3 +37,13 @@ services:
     ports:
       - "${HANDYMAN_PORT}:${HANDYMAN_PORT}"
       - "${HANDYMAN_GRPC_PORT}:${HANDYMAN_GRPC_PORT}"
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+
+  prometheus:
+    image: bitnami/prometheus
+
+  grafana:
+    image: grafana/grafana

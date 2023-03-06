@@ -6,7 +6,7 @@ ADD . $SERVICE_DIR
 RUN gradle clean bootJar
 
 FROM openjdk:17-jdk-alpine
-COPY --from=build /usr/app/build/libs/landscape*.jar /app/runner.jar
+COPY --from=build /usr/app/build/libs/LandscapeService*.jar /app/runner.jar
 ENV SERVICE_PORT=8081
 ENV RANCHER_GRPC_PORT=9093
 ENV HANDYMAN_GRPC_PORT=9092

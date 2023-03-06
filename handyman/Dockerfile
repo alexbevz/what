@@ -7,7 +7,7 @@ ADD . $SERVICE_DIR
 RUN gradle clean bootJar
 
 FROM openjdk:17-jdk-alpine
-COPY --from=build /usr/app/build/libs/handyman*.jar /app/runner.jar
+COPY --from=build /usr/app/build/libs/HandymanService*.jar /app/runner.jar
 ENV SERVICE_PORT=8082
 ENV GRPC_PORT=9092
 ENTRYPOINT java -jar /app/runner.jar --SERVICE_PORT=${SERVICE_PORT} --GRPC_PORT=${GRPC_PORT}

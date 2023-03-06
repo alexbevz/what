@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+import "common_messages.proto";
+package ru.tinkoff.vogorode.common.proto;
+
+option java_package = "ru.tinkoff.vogorode.common.proto";
+option java_multiple_files = true;
+
+service StatusService {
+  rpc getVersion(google.protobuf.Empty) returns (message.VersionResponse);
+  rpc getReadiness(google.protobuf.Empty) returns (message.ReadinessResponse);
+}

@@ -6,9 +6,13 @@ grpc:
     RancherService:
       address: ${RANCHER_GRPC_HOST}:${RANCHER_GRPC_PORT}
       negotiation-type: plaintext
+      enableKeepAlive: true
+      keepAliveWithoutCalls: true
     HandymanService:
       address: ${HANDYMAN_GRPC_HOST}:${HANDYMAN_GRPC_PORT}
       negotiation-type: plaintext
+      enableKeepAlive: true
+      keepAliveWithoutCalls: true
 
 spring:
   application:

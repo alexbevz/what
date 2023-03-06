@@ -58,6 +58,7 @@ class RancherApplicationIntegrationTests {
                 {"RancherService": "OK"}""";
 
         response.andExpect(status().isOk())
+                //TODO: to resolve situation
                 .andExpect(content().json(expectedContentResult));
     }
 
