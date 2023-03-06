@@ -8,6 +8,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
+import java.io.IOException;
+import java.net.ServerSocket;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -20,9 +23,13 @@ class LandscapeApplicationIntegrationTests {
     private MockMvc mockMvc;
 
     @BeforeAll
-    public static void setUp() {
-        // set a value LANDSCAPE_PORT to 8092
-        System.setProperty("LANDSCAPE_PORT", "8092");
+    public static void setUp() throws IOException {
+        try (ServerSocket serverSocket = new ServerSocket(0)) {
+            // get a random available port
+            int randomAvailablePort = serverSocket.getLocalPort();
+            // set a value LANDSCAPE_PORT to random port
+            System.setProperty("SERVICE_PORT", String.valueOf(randomAvailablePort));
+        }
     }
 
     @Test
@@ -41,7 +48,7 @@ class LandscapeApplicationIntegrationTests {
         ResultActions response = mockMvc.perform(get(readinessUrl));
 
         final String expectedContentResult = """
-                {"landscapeService": "OK"}""";
+                {"LandscapeService": "OK"}""";
 
         response.andExpect(status().isOk())
                 .andExpect(content().json(expectedContentResult));

@@ -5,6 +5,10 @@ grpc:
   server:
     port: ${GRPC_PORT}
 
+spring:
+  application:
+    name: HandymanService
+
 management:
   endpoints:
     web:

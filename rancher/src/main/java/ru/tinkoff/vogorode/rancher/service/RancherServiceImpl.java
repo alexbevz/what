@@ -2,19 +2,19 @@ package ru.tinkoff.vogorode.rancher.service;
 
 import com.google.protobuf.Empty;
 import io.grpc.stub.StreamObserver;
+import lombok.RequiredArgsConstructor;
 import net.devh.boot.grpc.server.service.GrpcService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.info.BuildProperties;
-import ru.tinkoff.vogorode.rancher.CommonConstant;
 import ru.tinkoff.vogorode.rancher.RancherServiceGrpc;
 import ru.tinkoff.vogorode.rancher.ReadinessResponse;
 import ru.tinkoff.vogorode.rancher.VersionResponse;
+import ru.tinkoff.vogorode.rancher.system.StatusService;
 
 @GrpcService
+@RequiredArgsConstructor
 public class RancherServiceImpl extends RancherServiceGrpc.RancherServiceImplBase {
 
-    @Autowired
-    private BuildProperties buildProperties;
+    private final BuildProperties buildProperties;
 
 
     /**
@@ -23,14 +23,9 @@ public class RancherServiceImpl extends RancherServiceGrpc.RancherServiceImplBas
     @Override
     public void getVersion(Empty request, StreamObserver<VersionResponse> responseObserver) {
 
-        String nameApplication = buildProperties.getName() + CommonConstant.SERVICE;
+        String nameService = buildProperties.getName();
 
-        VersionResponse versionResponse = VersionResponse.newBuilder()
-                .setArtifact(buildProperties.getArtifact())
-                .setName(nameApplication)
-                .setGroup(buildProperties.getGroup())
-                .setVersion(buildProperties.getVersion())
-                .build();
+        VersionResponse versionResponse = VersionResponse.newBuilder().setArtifact(buildProperties.getArtifact()).setName(nameService).setGroup(buildProperties.getGroup()).setVersion(buildProperties.getVersion()).build();
 
         responseObserver.onNext(versionResponse);
         responseObserver.onCompleted();
@@ -41,9 +36,8 @@ public class RancherServiceImpl extends RancherServiceGrpc.RancherServiceImplBas
      */
     @Override
     public void getReadiness(Empty request, StreamObserver<ReadinessResponse> responseObserver) {
-        ReadinessResponse readinessResponse = ReadinessResponse.newBuilder()
-                .setStatus(CommonConstant.STATUS_APPLICATION)
-                .build();
+        String statusService = StatusService.OK.name();
+        ReadinessResponse readinessResponse = ReadinessResponse.newBuilder().setStatus(statusService).build();
 
         responseObserver.onNext(readinessResponse);
         responseObserver.onCompleted();

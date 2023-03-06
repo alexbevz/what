@@ -3,16 +3,16 @@ server:
 
 grpc:
   client:
-    rancher:
+    RancherService:
       address: ${RANCHER_GRPC_HOST}:${RANCHER_GRPC_PORT}
       negotiation-type: plaintext
-    handyman:
+    HandymanService:
       address: ${HANDYMAN_GRPC_HOST}:${HANDYMAN_GRPC_PORT}
       negotiation-type: plaintext
 
 spring:
   application:
-    name: landscape
+    name: LandscapeService
 
 management:
   endpoints:

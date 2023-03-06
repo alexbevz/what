@@ -1,26 +1,26 @@
 package ru.tinkoff.vogorode.rancher.system;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.boot.info.BuildProperties;
 import org.springframework.stereotype.Service;
-import ru.tinkoff.vogorode.rancher.CommonConstant;
 
 import java.util.Map;
 
 @Service
+@RequiredArgsConstructor
 public class SystemService {
 
-    @Autowired
-    private BuildProperties buildProperties;
+    private final BuildProperties buildProperties;
 
 
     /**
      * Getting readiness
      *
-     * @return Map with meta-information about a readiness of service
+     * @return Map.Entry with meta-information about a readiness of service
      */
-    public Map<String, String> getReadiness() {
-        String nameService = buildProperties.getName() + CommonConstant.SERVICE;
-        return Map.of(nameService, CommonConstant.STATUS_APPLICATION);
+    public Map.Entry<String, String> getReadiness() {
+        String nameService = buildProperties.getName();
+        String statusService = StatusService.OK.name();
+        return Map.entry(nameService, statusService);
     }
 }

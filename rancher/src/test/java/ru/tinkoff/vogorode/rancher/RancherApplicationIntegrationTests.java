@@ -8,6 +8,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
+import java.io.IOException;
+import java.net.ServerSocket;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -20,12 +23,20 @@ class RancherApplicationIntegrationTests {
     private MockMvc mockMvc;
 
     @BeforeAll
-    public static void setUp() {
-        // set a value RANCHER_PORT to 8093
-        System.setProperty("RANCHER_PORT", "8093");
+    public static void setUp() throws IOException {
+        // set a value SERVICE_PORT to random port
+        System.setProperty("SERVICE_PORT", String.valueOf(getFreePort()));
 
-        // set a value GRPC_PORT to 9103
-        System.setProperty("GRPC_PORT", "9103");
+        // set a value GRPC_PORT to random port
+        System.setProperty("GRPC_PORT", String.valueOf(getFreePort()));
+    }
+
+    private static int getFreePort() throws IOException {
+        try (ServerSocket serverSocket = new ServerSocket(0)) {
+            // get a random available port
+            return serverSocket.getLocalPort();
+        }
+
     }
 
     @Test
@@ -44,7 +55,7 @@ class RancherApplicationIntegrationTests {
         ResultActions response = mockMvc.perform(get(readinessUrl));
 
         final String expectedContentResult = """
-                {"rancherService": "OK"}""";
+                {"RancherService": "OK"}""";
 
         response.andExpect(status().isOk())
                 .andExpect(content().json(expectedContentResult));

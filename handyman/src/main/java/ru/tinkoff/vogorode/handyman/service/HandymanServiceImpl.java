@@ -2,20 +2,20 @@ package ru.tinkoff.vogorode.handyman.service;
 
 import com.google.protobuf.Empty;
 import io.grpc.stub.StreamObserver;
+import lombok.RequiredArgsConstructor;
 import net.devh.boot.grpc.server.service.GrpcService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.info.BuildProperties;
-import ru.tinkoff.vogorode.handyman.CommonConstant;
 import ru.tinkoff.vogorode.handyman.HandymanServiceGrpc;
 import ru.tinkoff.vogorode.handyman.ReadinessResponse;
 import ru.tinkoff.vogorode.handyman.VersionResponse;
+import ru.tinkoff.vogorode.handyman.system.StatusService;
 
 
 @GrpcService
+@RequiredArgsConstructor
 public class HandymanServiceImpl extends HandymanServiceGrpc.HandymanServiceImplBase {
 
-    @Autowired
-    private BuildProperties buildProperties;
+    private final BuildProperties buildProperties;
 
     /**
      * gRPC method to share information about current service
@@ -23,7 +23,7 @@ public class HandymanServiceImpl extends HandymanServiceGrpc.HandymanServiceImpl
     @Override
     public void getVersion(Empty request, StreamObserver<VersionResponse> responseObserver) {
 
-        String nameApplication = buildProperties.getName() + CommonConstant.SERVICE;
+        String nameApplication = buildProperties.getName();
 
         VersionResponse versionResponse = VersionResponse.newBuilder()
                 .setArtifact(buildProperties.getArtifact())
@@ -41,8 +41,10 @@ public class HandymanServiceImpl extends HandymanServiceGrpc.HandymanServiceImpl
      */
     @Override
     public void getReadiness(Empty request, StreamObserver<ReadinessResponse> responseObserver) {
+        String statusService = StatusService.OK.name();
+
         ReadinessResponse readinessResponse = ReadinessResponse.newBuilder()
-                .setStatus(CommonConstant.STATUS_APPLICATION)
+                .setStatus(statusService)
                 .build();
 
         responseObserver.onNext(readinessResponse);
