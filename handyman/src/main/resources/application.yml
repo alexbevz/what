@@ -9,6 +9,11 @@ grpc:
 spring:
   application:
     name: HandymanService
+  datasource:
+    url: "jdbc:postgresql://${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_NAME_DB}"
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
+    drive-class-name: org.postgresql.Driver
 
 management:
   endpoints:
