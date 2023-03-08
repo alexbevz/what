@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: handyman-service
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: handyman-service
+  template:
+    metadata:
+      labels:
+        app: handyman-service
+    spec:
+      containers:
+        - name: handyman-service
+          image: dev-handyman-service
+          ports:
+            - containerPort: 8082
+            - containerPort: 9092
+          env:
+            - name: SERVICE_PORT
+              value: "8082"
+            - name: GRPC_PORT
+              value: "9092"
+            - name: POSTGRES_HOST
+              value: postgres
+            - name: POSTGRES_PORT
+              value: "5432"
+            - name: POSTGRES_USER
+              value: postgres
+            - name: POSTGRES_PASSWORD
+              value: postgres
+            - name: POSTGRES_NAME_DB
+              value: database
+          imagePullPolicy: IfNotPresent
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: handyman-service
+spec:
+  selector:
+    app: handyman-service
+  ports:
+    - name: app
+      port: 8082
+      targetPort: 8082
+    - name: grpc
+      port: 9092
+      targetPort: 9092
+  type: NodePort
